@@ -13,12 +13,12 @@ export default class App extends Component {
       "text-3",
       "text-4",
       "text-5",
-      "text-6"
+      "text-6",
     ]
     return (
       <div>
         <Trimmer className={containerClass} textClasses={textClasses}>
-          ČMAREM ČVARAK ŽAMET ŠČUKA ČIZME ČIPELE I KLJUČEVI
+          New video advertising strategy ĐŠĆŽĐĆĐŽŽŽĐ
         </Trimmer>
       </div>
     )
