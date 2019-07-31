@@ -13,25 +13,29 @@ export default class Trimmer extends PureComponent {
   state = {
     textClassIndex: 0,
     numLines: 0,
-    isOverflowing: false
+    // isOverflowing: false,
+    isTrimmed: false
   }
 
-  opmize() {
+  opmizeSize() {
     const { textClasses } = this.props
-
-    const { defaultView: view } = document
+    const { textClassIndex } = this.state
     const { containerEl, textEl } = this
 
-    const containerStyle = view.getComputedStyle(containerEl, null)
+    const containerStyle = getStyle(containerEl)
     let { height: containerHeight } = containerStyle
+    containerHeight = parseFloat(containerHeight)
 
-    const textStyle = view.getComputedStyle(textEl, null)
+    const textStyle = getStyle(textEl)
     let { height: textHeight } = textStyle
+    textHeight = parseFloat(textHeight)
 
-    let newTextClassIndex = textClasses.length - 1
-    while (textHeight > containerHeight && newTextClassIndex > 0) {
-      newTextClassIndex--
-      this.setState({ textClassIndex: newTextClassIndex })
+    if (textHeight >= containerHeight && textClassIndex > 0) {
+      this.setState({ textClassIndex: textClassIndex - 1 })
+    } else if (textHeight >= containerHeight) {
+      this.trim()
+    } else {
+      debugger
     }
   }
 
@@ -49,7 +53,8 @@ export default class Trimmer extends PureComponent {
     )
 
     this.setState({
-      numLines
+      numLines,
+      isTrimmed: true
     })
   }
 
@@ -62,13 +67,17 @@ export default class Trimmer extends PureComponent {
   }
 
   componentDidMount() {
-    this.opmize()
-    this.trim()
+    this.opmizeSize()
+  }
+
+  componentDidUpdate() {
+    this.opmizeSize()
+    // this.trim()
   }
 
   render() {
     const { className, textClasses, children } = this.props
-    const { textClassIndex, numLines } = this.state
+    const { textClassIndex, numLines, isTrimmed } = this.state
 
     const currentTextClass = textClasses[textClassIndex]
 
@@ -76,7 +85,7 @@ export default class Trimmer extends PureComponent {
       display: "-webkit-box",
       WebkitBoxOrient: "vertical",
       WebkitLineClamp: numLines,
-      overflow: "hidden",
+      // overflow: "hidden",
       textOverflow: "ellipsis"
     }
 
@@ -87,7 +96,7 @@ export default class Trimmer extends PureComponent {
           className={currentTextClass}
           ref={r => (this.textEl = r)}
         >
-          {children}
+          {!isTrimmed ? children : formatContent({ content: children })}
         </span>
       </div>
     )
@@ -131,10 +140,10 @@ function formatContent(
         WebkitBoxOrient: "vertical",
         WebkitLineClamp: clampLineCount,
         // overflow: 'hidden',
-        textOverflow: "ellipsis",
-        fontSize: fontSize,
-        lineHeight: `${lineHeight}px`,
-        maxHeight: `${clampHeight}px`
+        textOverflow: "ellipsis"
+        // fontSize: fontSize,
+        // lineHeight: `${lineHeight}px`,
+        // maxHeight: `${clampHeight}px`
       }
 
       const Element =
@@ -157,7 +166,7 @@ function formatContent(
       )
     }
   } else {
-    return ({ el = "div", ...rest }) => <el {...rest} />
+    return ({ el = "span", ...rest }) => <el {...rest} />
   }
 }
 

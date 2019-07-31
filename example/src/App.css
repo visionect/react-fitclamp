@@ -1,36 +1,49 @@
-.text-bubble {
-  width: 410px;
-  height: 200px;
-  color: white;
-  background: black;
-  padding: 2rem 4rem;
+body {
+  background: #efefef;
 }
 
-.text-6, .text-5, .text-4, .text-3, .text-2, .text-1 {
+.text-bubble {
+  width: 410px;
+  height: 150px;
+  color: white;
+  background: black;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 8px 0;
+}
+
+.text-6,
+.text-5,
+.text-4,
+.text-3,
+.text-2,
+.text-1 {
+  font-family: "Noto Sans", sans-serif;
   font-weight: bold;
-  line-height: 0.9;
+  line-height: 1;
 }
 
 .text-6 {
-  font-size: calc(1.5rem * 1.25 * 1.25 * 1.25 * 1.25 * 1.25);
+  font-size: calc(3rem * 1.125 * 1.125 * 1.125 * 1.125 * 1.125);
 }
 
 .text-5 {
-  font-size: calc(1.5rem * 1.25 * 1.25 * 1.25 * 1.25);
+  font-size: calc(3rem * 1.125 * 1.125 * 1.125 * 1.125);
 }
 
 .text-4 {
-  font-size: calc(1.5rem * 1.25 * 1.25 * 1.25);
+  font-size: calc(3rem * 1.125 * 1.125 * 1.125);
 }
 
 .text-3 {
-  font-size: calc(1.5rem * 1.25 * 1.25);
+  font-size: calc(3rem * 1.125 * 1.125);
 }
 
 .text-2 {
-  font-size: calc(1.5rem * 1.25);
+  font-size: calc(3rem * 1.125);
 }
 
 .text-1 {
-  font-size: calc(1.5rem);
+  font-size: calc(3rem);
 }

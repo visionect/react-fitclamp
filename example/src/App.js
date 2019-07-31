@@ -18,7 +18,7 @@ export default class App extends Component {
     return (
       <div>
         <Trimmer className={containerClass} textClasses={textClasses}>
-          Lorem ipšum dolor šit ameČ new media ruby on python react šwf
+          ČMAREM ČVARAK ŽAMET ŠČUKA ČIZME ČIPELE I KLJUČEVI
         </Trimmer>
       </div>
     )
