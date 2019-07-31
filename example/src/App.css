@@ -1,0 +1,36 @@
+.text-bubble {
+  width: 410px;
+  height: 200px;
+  color: white;
+  background: black;
+  padding: 2rem 4rem;
+}
+
+.text-6, .text-5, .text-4, .text-3, .text-2, .text-1 {
+  font-weight: bold;
+  line-height: 0.9;
+}
+
+.text-6 {
+  font-size: calc(1.5rem * 1.25 * 1.25 * 1.25 * 1.25 * 1.25);
+}
+
+.text-5 {
+  font-size: calc(1.5rem * 1.25 * 1.25 * 1.25 * 1.25);
+}
+
+.text-4 {
+  font-size: calc(1.5rem * 1.25 * 1.25 * 1.25);
+}
+
+.text-3 {
+  font-size: calc(1.5rem * 1.25 * 1.25);
+}
+
+.text-2 {
+  font-size: calc(1.5rem * 1.25);
+}
+
+.text-1 {
+  font-size: calc(1.5rem);
+}

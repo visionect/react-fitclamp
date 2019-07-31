@@ -1,12 +1,25 @@
-import React, { Component } from 'react'
+import React, { Component } from "react"
 
-import ExampleComponent from 'trimmer'
+import Trimmer from "trimmer"
+
+import "./App.css"
 
 export default class App extends Component {
-  render () {
+  render() {
+    const containerClass = "text-bubble"
+    const textClasses = [
+      "text-1",
+      "text-2",
+      "text-3",
+      "text-4",
+      "text-5",
+      "text-6"
+    ]
     return (
       <div>
-        <ExampleComponent text='Modern React component module' />
+        <Trimmer className={containerClass} textClasses={textClasses}>
+          Lorem ipšum dolor šit ameČ new media ruby on python react šwf
+        </Trimmer>
       </div>
     )
   }
