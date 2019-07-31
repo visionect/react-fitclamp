@@ -53,20 +53,23 @@ export default class Trimmer extends PureComponent {
   }
 
   trim() {
-    const { containerEl, textEl } = this
+    const { textEl } = this
 
-    const { height: clampHeight } = containerStyle
     const textStyle = this.getStyle(textEl)
+    let { lineHeight } = textStyle
+    lineHeight = parseFloat(lineHeight)
 
-    const { lineHeight } = textStyle
+    const numLines = Math.floor(this.containerHeight / lineHeight)
 
-    const numLines = Math.floor(
-      parseFloat(clampHeight) / parseFloat(lineHeight)
-    )
+    const { innerText } = textEl
+
+    debugger
 
     this.setState({
       numLines,
+      lineHeight,
       isTrimmed: true,
+      content: innerText,
     })
   }
 
