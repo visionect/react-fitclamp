@@ -1,4 +1,5 @@
-import React, { PureComponent } from "react"
+import React, { PureComponent, Fragment } from "react"
+import { findDOMNode } from "react-dom"
 import PropTypes from "prop-types"
 
 // import styles from './styles.css'
@@ -7,7 +8,7 @@ export default class Trimmer extends PureComponent {
   static propTypes = {
     className: PropTypes.string.isRequired,
     textClasses: PropTypes.array.isRequired,
-    children: PropTypes.node.isRequired
+    children: PropTypes.node.isRequired,
   }
 
   state = {
@@ -47,7 +48,7 @@ export default class Trimmer extends PureComponent {
     } else if (textHeight >= containerHeight) {
       this.trim()
     } else {
-      debugger
+      // debugger
     }
   }
 
@@ -65,7 +66,7 @@ export default class Trimmer extends PureComponent {
 
     this.setState({
       numLines,
-      isTrimmed: true
+      isTrimmed: true,
     })
   }
 
@@ -73,7 +74,7 @@ export default class Trimmer extends PureComponent {
     const { textClasses } = this.props
 
     this.setState({
-      textClassIndex: textClasses.length - 1
+      textClassIndex: textClasses.length - 1,
     })
   }
 
@@ -97,8 +98,7 @@ export default class Trimmer extends PureComponent {
       display: "-webkit-box",
       WebkitBoxOrient: "vertical",
       WebkitLineClamp: numLines,
-      // overflow: "hidden",
-      textOverflow: "ellipsis"
+      textOverflow: "ellipsis",
     }
 
     return (
@@ -188,7 +188,7 @@ function formatContent(
 
 class Word extends PureComponent {
   state = {
-    isClamped: null
+    isClamped: null,
   }
 
   componentDidMount() {
