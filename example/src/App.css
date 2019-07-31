@@ -1,16 +1,18 @@
 body {
-  background: #efefef;
+  background: #eee;
+}
+
+#root {
+  padding: 2rem 4rem;
+  background: #888;
 }
 
 .text-bubble {
-  width: 410px;
-  height: 180px;
-  color: white;
   background: black;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  padding: 8px 0;
+  color: white;
+  width: 410px;
+  height: 200px;
+  word-break: keep-all;
 }
 
 .text-6,
@@ -25,25 +27,25 @@ body {
 }
 
 .text-6 {
-  font-size: calc(3rem * 1.125 * 1.125 * 1.125 * 1.125 * 1.125);
+  font-size: calc(48px * 1.125 * 1.125 * 1.125 * 1.125 * 1.125);
 }
 
 .text-5 {
-  font-size: calc(3rem * 1.125 * 1.125 * 1.125 * 1.125);
+  font-size: calc(48px * 1.125 * 1.125 * 1.125 * 1.125);
 }
 
 .text-4 {
-  font-size: calc(3rem * 1.125 * 1.125 * 1.125);
+  font-size: calc(48px * 1.125 * 1.125 * 1.125);
 }
 
 .text-3 {
-  font-size: calc(3rem * 1.125 * 1.125);
+  font-size: calc(48px * 1.125 * 1.125);
 }
 
 .text-2 {
-  font-size: calc(3rem * 1.125);
+  font-size: calc(48px * 1.125);
 }
 
 .text-1 {
-  font-size: calc(3rem);
+  font-size: calc(48px);
 }
