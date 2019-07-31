@@ -13,8 +13,16 @@ export default class Trimmer extends PureComponent {
   state = {
     textClassIndex: 0,
     numLines: 0,
-    // isOverflowing: false,
-    isTrimmed: false
+    isTrimmed: false,
+  }
+
+  containerHeight = 0
+
+  readContainerDimensions() {
+    const { containerEl } = this
+    const containerStyle = this.getStyle(containerEl)
+    this.containerHeight = parseFloat(containerStyle.height)
+  }
   }
 
   opmizeSize() {
@@ -67,6 +75,7 @@ export default class Trimmer extends PureComponent {
   }
 
   componentDidMount() {
+    this.readContainerDimensions()
     this.opmizeSize()
   }
 
