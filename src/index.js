@@ -224,16 +224,15 @@ class Word extends PureComponent {
   }
 }
 
-const styleCache = []
-function getStyle(element) {
-  if (styleCache[element]) {
-    return styleCache[element]
-  } else if (element.currentStyle) {
-    styleCache[element] = element.currentStyle
-    return element.currentStyle
-  } else if (window.getComputedStyle) {
-    const computedStyle = document.defaultView.getComputedStyle(element, null)
-    styleCache[element] = computedStyle
-    return computedStyle
+function hashCode(code) {
+  var hash = 0
+  if (code.length == 0) {
+    return hash
   }
+  for (var i = 0; i < code.length; i++) {
+    var char = code.charCodeAt(i)
+    hash = (hash << 5) - hash + char
+    hash = hash & hash
+  }
+  return hash
 }
