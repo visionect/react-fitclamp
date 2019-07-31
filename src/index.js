@@ -1,6 +1,7 @@
 import React, { PureComponent, Fragment } from "react"
 import { findDOMNode } from "react-dom"
 import PropTypes from "prop-types"
+import { relative } from "path"
 
 // import styles from './styles.css'
 
@@ -21,8 +22,9 @@ export default class Trimmer extends PureComponent {
 
   readContainerDimensions() {
     const { containerEl } = this
-    const containerStyle = this.getStyle(containerEl)
-    this.containerHeight = parseFloat(containerStyle.height)
+    const { top, height } = containerEl.getBoundingClientRect()
+    this.containerTop = top
+    this.containerHeight = height
   }
 
   getStyle(element) {
@@ -31,7 +33,6 @@ export default class Trimmer extends PureComponent {
   }
 
   opmizeSize() {
-    const { textClasses } = this.props
     const { textClassIndex } = this.state
     const { containerEl, textEl } = this
 
@@ -40,36 +41,29 @@ export default class Trimmer extends PureComponent {
     containerHeight = parseFloat(containerHeight)
 
     const textStyle = this.getStyle(textEl)
-    let { height: textHeight } = textStyle
+    let { height: textHeight, lineHeight } = textStyle
     textHeight = parseFloat(textHeight)
+    lineHeight = parseFloat(lineHeight)
 
     if (textHeight >= containerHeight && textClassIndex > 0) {
       this.setState({ textClassIndex: textClassIndex - 1 })
     } else if (textHeight >= containerHeight) {
-      this.trim()
+      this.trim(lineHeight)
     } else {
       // debugger
     }
   }
 
-  trim() {
-    const { textEl } = this
-
-    const textStyle = this.getStyle(textEl)
-    let { lineHeight } = textStyle
-    lineHeight = parseFloat(lineHeight)
+  trim(lineHeight) {
+    const { innerText: content } = this.textEl
 
     const numLines = Math.floor(this.containerHeight / lineHeight)
 
-    const { innerText } = textEl
-
-    debugger
-
     this.setState({
+      content,
       numLines,
       lineHeight,
       isTrimmed: true,
-      content: innerText,
     })
   }
 
@@ -87,13 +81,19 @@ export default class Trimmer extends PureComponent {
   }
 
   componentDidUpdate() {
-    this.opmizeSize()
-    // this.trim()
+    const { isTrimmed } = this.state
+    !isTrimmed && this.opmizeSize()
   }
 
   render() {
     const { className, textClasses, children } = this.props
-    const { textClassIndex, numLines, isTrimmed } = this.state
+    const {
+      textClassIndex,
+      numLines,
+      lineHeight,
+      isTrimmed,
+      content,
+    } = this.state
 
     const currentTextClass = textClasses[textClassIndex]
 
@@ -102,87 +102,69 @@ export default class Trimmer extends PureComponent {
       WebkitBoxOrient: "vertical",
       WebkitLineClamp: numLines,
       textOverflow: "ellipsis",
+      // wordBreak: "keep-all",
+      // overflow: "hidden",
+      // whiteSpace: "nowrap",
     }
 
     return (
       <div className={className} ref={r => (this.containerEl = r)}>
-        <span
-          style={trimStyle}
-          className={currentTextClass}
-          ref={r => (this.textEl = r)}
-        >
-          {!isTrimmed ? children : formatContent({ content: children })}
-        </span>
+        {!isTrimmed ? (
+          <span
+            ref={r => (this.textEl = r)}
+            style={trimStyle}
+            className={currentTextClass}
+          >
+            {children}
+          </span>
+        ) : (
+          formatContent({
+            content,
+            clampHeight: this.containerTop + numLines * lineHeight,
+            lineHeight,
+            className: currentTextClass,
+            style: trimStyle,
+          })
+        )}
       </div>
     )
   }
 }
 
-function formatContent(
-  content,
+function formatContent({
+  content = "",
   clampHeight,
-  clampLineCount,
   lineHeight,
-  fontSize
-) {
-  if (content && content.split) {
-    const words = content.split(" ").map((word, index) => (
+  className,
+  style,
+}) {
+  const words = content.split(" ").map((word, index) => (
+    <Word
+      key={`word-${hashCode(word + index)}`}
+      clampHeight={clampHeight - lineHeight}
+    >
+      {word}
+    </Word>
+  ))
+
+  for (let i = words.length - 1; i > 0; i--) {
+    words.splice(
+      i,
+      0,
       <Word
-        key={`word-${hashCode(word + index)}`}
-        clampHeight={clampHeight}
-        clampLineCount={clampLineCount}
-        fontSize={fontSize}
-        lineHeight={lineHeight}
+        key={`space-${hashCode(words[i] + i)}`}
+        clampHeight={clampHeight - lineHeight}
       >
-        {word}
-      </Word>
-    ))
-
-    for (let i = words.length - 1; i > 0; i--) {
-      words.splice(
-        i,
-        0,
-        <span className="DISABLE_ABSOLUTE" key={`space-${i}`}>
-          {" "}
-        </span>
-      )
-    }
-
-    return ({ el = "div", className = "", ...rest }) => {
-      const contentClassName = `content ${className}`
-      const style = {
-        display: "-webkit-box",
-        WebkitBoxOrient: "vertical",
-        WebkitLineClamp: clampLineCount,
-        // overflow: 'hidden',
-        textOverflow: "ellipsis"
-        // fontSize: fontSize,
-        // lineHeight: `${lineHeight}px`,
-        // maxHeight: `${clampHeight}px`
-      }
-
-      const Element =
-        el === "div"
-          ? ({ children, ...rest }) => (
-              <div className={contentClassName} {...rest}>
-                {children}
-              </div>
-            )
-          : ({ children, ...rest }) => (
-              <span className={contentClassName} {...rest}>
-                {children}
-              </span>
-            )
-
-      return (
-        <Element {...rest} style={style}>
-          {words.map((w, i) => w)}
-        </Element>
-      )
-    }
-  } else {
-    return ({ el = "span", ...rest }) => <el {...rest} />
+        {" "}
+      </Word>,
+    )
   }
+
+  return (
+    <span className={className} style={style}>
+      {words.map((w, i) => w)}
+    </span>
+  )
 }
 
 // Individual Words are rendered as transparent
@@ -195,19 +177,19 @@ class Word extends PureComponent {
   }
 
   componentDidMount() {
-    this.setupClamping()
+    this.clampIfNeeded()
   }
 
-  setupClamping() {
+  clampIfNeeded() {
     const { isClamped } = this.state
     if (isClamped !== null) return isClamped
 
-    const { clampHeight, lineHeight } = this.props
+    const { clampHeight } = this.props
     const element = findDOMNode(this)
-    const { offsetTop } = element
-    const newClampedState = offsetTop + lineHeight > clampHeight
+    const { top } = element.getBoundingClientRect()
+    const newClampedState = top >= clampHeight
 
-    this.setState({ isClamped: newClampedState })
+    this.setState({ top, isClamped: newClampedState })
   }
 
   render() {
