@@ -23,6 +23,10 @@ export default class Trimmer extends PureComponent {
     const containerStyle = this.getStyle(containerEl)
     this.containerHeight = parseFloat(containerStyle.height)
   }
+
+  getStyle(element) {
+    const { defaultView: view } = document
+    return view.getComputedStyle(element, null)
   }
 
   opmizeSize() {
@@ -30,11 +34,11 @@ export default class Trimmer extends PureComponent {
     const { textClassIndex } = this.state
     const { containerEl, textEl } = this
 
-    const containerStyle = getStyle(containerEl)
+    const containerStyle = this.getStyle(containerEl)
     let { height: containerHeight } = containerStyle
     containerHeight = parseFloat(containerHeight)
 
-    const textStyle = getStyle(textEl)
+    const textStyle = this.getStyle(textEl)
     let { height: textHeight } = textStyle
     textHeight = parseFloat(textHeight)
 
@@ -50,10 +54,9 @@ export default class Trimmer extends PureComponent {
   trim() {
     const { containerEl, textEl } = this
 
-    const containerStyle = getStyle(containerEl)
     const { height: clampHeight } = containerStyle
+    const textStyle = this.getStyle(textEl)
 
-    const textStyle = getStyle(textEl)
     const { lineHeight } = textStyle
 
     const numLines = Math.floor(
