@@ -203,9 +203,9 @@ class Word extends PureComponent {
     if (isClamped !== null) return isClamped
 
     const { clampHeight, lineHeight } = this.props
-    const element = ReactDOM.findDOMNode(this)
+    const element = findDOMNode(this)
     const { offsetTop } = element
-    const newClampedState = offsetTop + parseFloat(lineHeight) > clampHeight
+    const newClampedState = offsetTop + lineHeight > clampHeight
 
     this.setState({ isClamped: newClampedState })
   }
@@ -213,14 +213,13 @@ class Word extends PureComponent {
   render() {
     const { children } = this.props
     const { isClamped } = this.state
-
-    const wordStyle = { opacity: isClamped ? 0 : 1 }
-
-    return (
-      <span style={wordStyle} className={`Word DISABLE_ABSOLUTE`}>
-        {children}
-      </span>
-    )
+    const style = isClamped
+      ? {
+          opacity: 0,
+          pointerEvents: "none",
+        }
+      : {}
+    return <span style={style}>{children}</span>
   }
 }
 
