@@ -36,7 +36,7 @@ export default class Trimmer extends PureComponent {
 
   opmizeSize() {
     const { textClassIndex } = this.state
-    const { containerEl, textEl } = this
+    const { textEl } = this
 
     const textStyle = this.getStyle(textEl)
     let { lineHeight } = textStyle
@@ -74,13 +74,14 @@ export default class Trimmer extends PureComponent {
 
   componentWillMount() {
     const { textClasses } = this.props
-
     this.setState({
       textClassIndex: textClasses.length - 1,
     })
   }
 
   componentDidMount() {
+    const { innerText: content } = this.textEl
+    this.setState({ content })
     this.readContainerDimensions()
     this.opmizeSize()
   }
@@ -112,16 +113,17 @@ export default class Trimmer extends PureComponent {
       WebkitBoxOrient: "vertical",
       WebkitLineClamp: numLines,
       textOverflow: "ellipsis",
-      // wordBreak: "keep-all",
-      // overflow: "hidden",
-      // whiteSpace: "nowrap",
     }
 
     const clampWidth = this.containerWidth
 
     if (isMeasuring) {
       return (
-        <div className={className} ref={r => (this.containerEl = r)}>
+        <div
+          key={`measuring-${content}`}
+          className={className}
+          ref={r => (this.containerEl = r)}
+        >
           <span
             ref={r => (this.textEl = r)}
             style={measureStyle}
@@ -133,7 +135,11 @@ export default class Trimmer extends PureComponent {
       )
     } else if (isTrimmed) {
       return (
-        <div className={className} ref={r => (this.containerEl = r)}>
+        <div
+          key={`trimmed-${content}`}
+          className={className}
+          ref={r => (this.containerEl = r)}
+        >
           {formatContent({
             content,
             lineHeight,
@@ -146,12 +152,19 @@ export default class Trimmer extends PureComponent {
       )
     } else {
       return (
-        <div className={className} ref={r => (this.containerEl = r)}>
-          <span className={currentTextClass}>
-            <Word clampWidth={clampWidth} clampHeight={Math.POSITIVE_INFINITY}>
-              {children}
-            </Word>
-          </span>
+        <div
+          key={`non-trimmed-${content}`}
+          className={className}
+          ref={r => (this.containerEl = r)}
+        >
+          {formatContent({
+            content,
+            lineHeight,
+            clampHeight: this.containerTop + numLines * lineHeight,
+            clampWidth: clampWidth,
+            className: currentTextClass,
+            style: trimStyle,
+          })}
         </div>
       )
     }
@@ -216,15 +229,15 @@ class Word extends PureComponent {
 
     const { clampHeight } = this.props
     const element = findDOMNode(this)
-    const { top } = element.getBoundingClientRect()
+    const { top, width } = element.getBoundingClientRect()
     const newClampedState = top >= clampHeight
 
-    this.setState({ top, isClamped: newClampedState })
+    this.setState({ top, width, isClamped: newClampedState })
   }
 
   render() {
     const { children, clampWidth, isSpace } = this.props
-    const { isClamped } = this.state
+    const { isClamped, width } = this.state
     const style = isClamped
       ? {
           opacity: 0,
@@ -232,9 +245,7 @@ class Word extends PureComponent {
         }
       : !isSpace
       ? {
-          // This handles too long words but breaks
-          // layout measurement (top boundary is increased)
-          // display: "inline-block",
+          display: width > clampWidth ? "inline-block" : "inline",
           textOverflow: "ellipsis",
           maxWidth: `${clampWidth}px`,
           overflowX: "hidden",
