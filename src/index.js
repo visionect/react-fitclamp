@@ -16,14 +16,16 @@ export default class Trimmer extends PureComponent {
     textClassIndex: 0,
     numLines: 0,
     isTrimmed: false,
+    isMeasuring: true,
   }
 
   containerHeight = 0
 
   readContainerDimensions() {
     const { containerEl } = this
-    const { top, height } = containerEl.getBoundingClientRect()
+    const { top, width, height } = containerEl.getBoundingClientRect()
     this.containerTop = top
+    this.containerWidth = width
     this.containerHeight = height
   }
 
@@ -36,21 +38,23 @@ export default class Trimmer extends PureComponent {
     const { textClassIndex } = this.state
     const { containerEl, textEl } = this
 
-    const containerStyle = this.getStyle(containerEl)
-    let { height: containerHeight } = containerStyle
-    containerHeight = parseFloat(containerHeight)
-
     const textStyle = this.getStyle(textEl)
-    let { height: textHeight, lineHeight } = textStyle
-    textHeight = parseFloat(textHeight)
+    let { lineHeight } = textStyle
     lineHeight = parseFloat(lineHeight)
+    const {
+      width: textWidth,
+      height: textHeight,
+    } = textEl.getBoundingClientRect()
 
-    if (textHeight >= containerHeight && textClassIndex > 0) {
+    if (
+      (textHeight >= this.containerHeight || textWidth > this.containerWidth) &&
+      textClassIndex > 0
+    ) {
       this.setState({ textClassIndex: textClassIndex - 1 })
-    } else if (textHeight >= containerHeight) {
+    } else if (textHeight >= this.containerHeight) {
       this.trim(lineHeight)
     } else {
-      // debugger
+      this.setState({ isMeasuring: false })
     }
   }
 
@@ -64,6 +68,7 @@ export default class Trimmer extends PureComponent {
       numLines,
       lineHeight,
       isTrimmed: true,
+      isMeasuring: false,
     })
   }
 
@@ -81,8 +86,8 @@ export default class Trimmer extends PureComponent {
   }
 
   componentDidUpdate() {
-    const { isTrimmed } = this.state
-    !isTrimmed && this.opmizeSize()
+    const { isMeasuring } = this.state
+    isMeasuring && this.opmizeSize()
   }
 
   render() {
@@ -92,10 +97,15 @@ export default class Trimmer extends PureComponent {
       numLines,
       lineHeight,
       isTrimmed,
+      isMeasuring,
       content,
     } = this.state
 
     const currentTextClass = textClasses[textClassIndex]
+
+    const measureStyle = {
+      display: "inline-block",
+    }
 
     const trimStyle = {
       display: "-webkit-box",
@@ -107,33 +117,51 @@ export default class Trimmer extends PureComponent {
       // whiteSpace: "nowrap",
     }
 
-    return (
-      <div className={className} ref={r => (this.containerEl = r)}>
-        {!isTrimmed ? (
+    const clampWidth = this.containerWidth
+
+    if (isMeasuring) {
+      return (
+        <div className={className} ref={r => (this.containerEl = r)}>
           <span
             ref={r => (this.textEl = r)}
-            style={trimStyle}
+            style={measureStyle}
             className={currentTextClass}
           >
             {children}
           </span>
-        ) : (
-          formatContent({
+        </div>
+      )
+    } else if (isTrimmed) {
+      return (
+        <div className={className} ref={r => (this.containerEl = r)}>
+          {formatContent({
             content,
-            clampHeight: this.containerTop + numLines * lineHeight,
             lineHeight,
+            clampHeight: this.containerTop + numLines * lineHeight,
+            clampWidth: clampWidth,
             className: currentTextClass,
             style: trimStyle,
-          })
-        )}
-      </div>
-    )
+          })}
+        </div>
+      )
+    } else {
+      return (
+        <div className={className} ref={r => (this.containerEl = r)}>
+          <span className={currentTextClass}>
+            <Word clampWidth={clampWidth} clampHeight={Math.POSITIVE_INFINITY}>
+              {children}
+            </Word>
+          </span>
+        </div>
+      )
+    }
   }
 }
 
 function formatContent({
   content = "",
   clampHeight,
+  clampWidth,
   lineHeight,
   className,
   style,
@@ -142,6 +170,7 @@ function formatContent({
     <Word
       key={`word-${hashCode(word + index)}`}
       clampHeight={clampHeight - lineHeight}
+      clampWidth={clampWidth}
     >
       {word}
     </Word>
@@ -154,6 +183,7 @@ function formatContent({
       <Word
         key={`space-${hashCode(words[i] + i)}`}
         clampHeight={clampHeight - lineHeight}
+        isSpace={true}
       >
         {" "}
       </Word>,
@@ -161,9 +191,9 @@ function formatContent({
   }
 
   return (
-    <span className={className} style={style}>
+    <div className={className} style={style}>
       {words.map((w, i) => w)}
-    </span>
+    </div>
   )
 }
 
@@ -193,12 +223,22 @@ class Word extends PureComponent {
   }
 
   render() {
-    const { children } = this.props
+    const { children, clampWidth, isSpace } = this.props
     const { isClamped } = this.state
     const style = isClamped
       ? {
           opacity: 0,
           pointerEvents: "none",
+        }
+      : !isSpace
+      ? {
+          // This handles too long words but breaks
+          // layout measurement (top boundary is increased)
+          // display: "inline-block",
+          textOverflow: "ellipsis",
+          maxWidth: `${clampWidth}px`,
+          overflowX: "hidden",
+          overflowY: "visible",
         }
       : {}
     return <span style={style}>{children}</span>
