@@ -27,7 +27,7 @@ export default class App extends Component {
           Advertising sync: Budget
         </Trimmer>
         <Trimmer className={containerClass} textClasses={textClasses}>
-          Joan - Sprint planning
+          Joan - Sprinte planning
         </Trimmer>
         <Trimmer className={containerClass} textClasses={textClasses}>
           Worst case scenario plan
@@ -45,8 +45,8 @@ export default class App extends Component {
           New videos advertising strategy for Eastern European markets
         </Trimmer>
         <Trimmer className={containerClass} textClasses={textClasses}>
-          Lorem ipsum dolor sit amet adipiscig automation testing line clipping
-          it can ĐŠČĆŽĐ ŠĆĐŠČĐ ĐŠČĆŠŽŽ ŠĐČ ŽŠĆ ĐŠČĆŽ Š
+          Lorem ipsum dolor sit amet adipiscig line clipping it can ĐŠČĆŽĐ
+          ŠĆĐŠČĐ ĐŠČĆŠŽŽ ŠĐČ ŽŠĆ ĐŠČĆŽ Š
         </Trimmer>
       </div>
     )
