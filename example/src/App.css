@@ -11,8 +11,12 @@ body {
   background: black;
   color: white;
   width: 410px;
-  height: 200px;
-  word-break: keep-all;
+  height: 160px;
+  /*word-break: keep-all;*/
+  margin: 3rem 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .text-6,
@@ -27,25 +31,32 @@ body {
 }
 
 .text-6 {
-  font-size: calc(48px * 1.125 * 1.125 * 1.125 * 1.125 * 1.125);
+  font-size: calc(2.5rem * 1.125 * 1.125 * 1.125 * 1.125 * 1.125);
+  letter-spacing: -1.5px;
 }
 
 .text-5 {
-  font-size: calc(48px * 1.125 * 1.125 * 1.125 * 1.125);
+  font-size: calc(2.5rem * 1.125 * 1.125 * 1.125 * 1.125);
+  letter-spacing: -1px;
+  line-height: 1;
 }
 
 .text-4 {
-  font-size: calc(48px * 1.125 * 1.125 * 1.125);
+  font-size: calc(2.5rem * 1.125 * 1.125 * 1.125);
+  line-height: 1;
+  letter-spacing: -0.75px;
 }
 
 .text-3 {
-  font-size: calc(48px * 1.125 * 1.125);
+  font-size: calc(2.5rem * 1.125 * 1.125);
+  letter-spacing: -0.3px;
 }
 
 .text-2 {
-  font-size: calc(48px * 1.125);
+  font-size: calc(2.5rem * 1.125);
+  letter-spacing: -0.1px;
 }
 
 .text-1 {
-  font-size: calc(48px);
+  font-size: calc(2.5rem);
 }
