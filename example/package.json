@@ -1,6 +1,6 @@
 {
-  "name": "trimmer-example",
-  "homepage": "https://some1else.github.io/trimmer",
+  "name": "react-fitclamp-example",
+  "homepage": "https://some1else.github.io/react-fitclamp",
   "version": "0.0.0",
   "license": "MIT",
   "private": true,
@@ -9,7 +9,7 @@
     "react": "^15.0.0",
     "react-dom": "^15.0.0",
     "react-scripts": "^1.1.4",
-    "trimmer": "link:.."
+    "react-fitclamp": "link:.."
   },
   "scripts": {
     "start": "react-scripts start",

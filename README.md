@@ -1,27 +1,25 @@
-# trimmer
+# react-fitclamp
 
 > Trims
 
-[![NPM](https://img.shields.io/npm/v/trimmer.svg)](https://www.npmjs.com/package/trimmer) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+[![NPM](https://img.shields.io/npm/v/react-fitclamp.svg)](https://www.npmjs.com/package/react-fitclamp) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
 ## Install
 
 ```bash
-npm install --save trimmer
+npm install --save react-fitclamp
 ```
 
 ## Usage
 
 ```jsx
-import React, { Component } from 'react'
+import React, { Component } from "react"
 
-import MyComponent from 'trimmer'
+import MyComponent from "react-fitclamp"
 
 class Example extends Component {
-  render () {
-    return (
-      <MyComponent />
-    )
+  render() {
+    return <MyComponent />
   }
 }
 ```

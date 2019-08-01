@@ -1,6 +1,6 @@
 import React, { Component } from "react"
 
-import Trimmer from "trimmer"
+import FitClamp from "react-fitclamp"
 
 import "./App.css"
 
@@ -17,37 +17,37 @@ export default class App extends Component {
     ]
     return (
       <div>
-        <Trimmer className={containerClass} textClasses={textClasses}>
+        <FitClamp className={containerClass} textClasses={textClasses}>
           Booked
-        </Trimmer>
-        <Trimmer className={containerClass} textClasses={textClasses}>
+        </FitClamp>
+        <FitClamp className={containerClass} textClasses={textClasses}>
           Vacant
-        </Trimmer>
-        <Trimmer className={containerClass} textClasses={textClasses}>
+        </FitClamp>
+        <FitClamp className={containerClass} textClasses={textClasses}>
           Advertising sync: Budget
-        </Trimmer>
-        <Trimmer className={containerClass} textClasses={textClasses}>
+        </FitClamp>
+        <FitClamp className={containerClass} textClasses={textClasses}>
           Joan - Sprinte planning
-        </Trimmer>
-        <Trimmer className={containerClass} textClasses={textClasses}>
+        </FitClamp>
+        <FitClamp className={containerClass} textClasses={textClasses}>
           Worst case scenario plan
-        </Trimmer>
-        <Trimmer className={containerClass} textClasses={textClasses}>
+        </FitClamp>
+        <FitClamp className={containerClass} textClasses={textClasses}>
           Email marketing automation
-        </Trimmer>
-        <Trimmer className={containerClass} textClasses={textClasses}>
+        </FitClamp>
+        <FitClamp className={containerClass} textClasses={textClasses}>
           Visionect &lt;&gt; Petrol: Intro video conference call
-        </Trimmer>
-        <Trimmer className={containerClass} textClasses={textClasses}>
+        </FitClamp>
+        <FitClamp className={containerClass} textClasses={textClasses}>
           New videos advertising strategy for Eastern Europe
-        </Trimmer>
-        <Trimmer className={containerClass} textClasses={textClasses}>
+        </FitClamp>
+        <FitClamp className={containerClass} textClasses={textClasses}>
           New videos advertising strategy for Eastern European markets
-        </Trimmer>
-        <Trimmer className={containerClass} textClasses={textClasses}>
+        </FitClamp>
+        <FitClamp className={containerClass} textClasses={textClasses}>
           Lorem ipsum dolor sit amet adipiscig line clipping it can ĐŠČĆŽĐ
           ŠĆĐŠČĐ ĐŠČĆŠŽŽ ŠĐČ ŽŠĆ ĐŠČĆŽ Š
-        </Trimmer>
+        </FitClamp>
       </div>
     )
   }
