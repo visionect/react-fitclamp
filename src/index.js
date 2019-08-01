@@ -44,6 +44,9 @@ export default class Trimmer extends PureComponent {
     const {
       width: textWidth,
       height: textHeight,
+      top: textTop,
+      // TODO: use textTop to get offset
+      // for flex aligned text
     } = textEl.getBoundingClientRect()
 
     if (
