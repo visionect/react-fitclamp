@@ -1,11 +1,10 @@
 import React, { PureComponent, Fragment } from "react"
 import { findDOMNode } from "react-dom"
 import PropTypes from "prop-types"
-import { relative } from "path"
 
 // import styles from './styles.css'
 
-export default class Trimmer extends PureComponent {
+export default class FitClamp extends PureComponent {
   static propTypes = {
     className: PropTypes.string.isRequired,
     textClasses: PropTypes.array.isRequired,
@@ -20,10 +19,12 @@ export default class Trimmer extends PureComponent {
   }
 
   containerHeight = 0
+  containerWidth = 0
 
   readContainerDimensions() {
     const { containerEl } = this
     const { top, width, height } = containerEl.getBoundingClientRect()
+
     this.containerTop = top
     this.containerWidth = width
     this.containerHeight = height
@@ -41,6 +42,7 @@ export default class Trimmer extends PureComponent {
     const textStyle = this.getStyle(textEl)
     let { lineHeight } = textStyle
     lineHeight = parseFloat(lineHeight)
+
     const {
       width: textWidth,
       height: textHeight,
@@ -123,7 +125,7 @@ export default class Trimmer extends PureComponent {
     if (isMeasuring) {
       return (
         <div
-          key={`measuring-${content}`}
+          key={`measuring-${hashCode(content || "")}`}
           className={className}
           ref={r => (this.containerEl = r)}
         >
@@ -139,7 +141,7 @@ export default class Trimmer extends PureComponent {
     } else if (isTrimmed) {
       return (
         <div
-          key={`trimmed-${content}`}
+          key={`trimmed-${hashCode(content || "")}`}
           className={className}
           ref={r => (this.containerEl = r)}
         >
@@ -156,7 +158,7 @@ export default class Trimmer extends PureComponent {
     } else {
       return (
         <div
-          key={`non-trimmed-${content}`}
+          key={`non-trimmed-${hashCode(content || "")}`}
           className={className}
           ref={r => (this.containerEl = r)}
         >
