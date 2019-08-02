@@ -15,14 +15,24 @@ npm install --save react-fitclamp
 ```jsx
 import React, { Component } from "react"
 
-import MyComponent from "react-fitclamp"
+import FitClamp from "react-fitclamp"
 
 class Example extends Component {
   render() {
-    return <MyComponent />
+    const containerClass = "card-medium"
+    const textSizes = ["size-1", "size-2", "size-3"]
+    const text = "Lorem ipsum dolor sit amet"
+
+    return (
+      <FitClamp className={containerClass} textClasses={textSizes}>
+        {text}
+      </FitClamp>
+    )
   }
 }
 ```
+
+Make sure the CSS for textClasses contains line-height setting in percentages, integers or pixels. Keywords like "normal" will not work.
 
 ## License
 
