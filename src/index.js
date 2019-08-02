@@ -46,9 +46,6 @@ export default class FitClamp extends PureComponent {
     const {
       width: textWidth,
       height: textHeight,
-      top: textTop,
-      // TODO: use textTop to get offset
-      // for flex aligned text
     } = textEl.getBoundingClientRect()
 
     if (
@@ -96,6 +93,14 @@ export default class FitClamp extends PureComponent {
     isMeasuring && this.opmizeSize()
   }
 
+  getContainerEl = () => {
+    return this.containerEl
+  }
+
+  getTextEl = () => {
+    return this.textEl
+  }
+
   render() {
     const { className, textClasses, children } = this.props
     const {
@@ -122,6 +127,12 @@ export default class FitClamp extends PureComponent {
 
     const clampWidth = this.containerWidth
 
+    let delta
+    if (isTrimmed) {
+      const { top: textTop } = this.textEl.getBoundingClientRect()
+      delta = textTop - this.containerTop
+    }
+
     if (isMeasuring) {
       return (
         <div
@@ -145,14 +156,17 @@ export default class FitClamp extends PureComponent {
           className={className}
           ref={r => (this.containerEl = r)}
         >
-          {formatContent({
-            content,
-            lineHeight,
-            clampHeight: this.containerTop + numLines * lineHeight,
-            clampWidth: clampWidth,
-            className: currentTextClass,
-            style: trimStyle,
-          })}
+          <div ref={r => (this.textEl = r)} className={currentTextClass}>
+            {formatContent({
+              content,
+              lineHeight,
+              clampHeight: numLines * lineHeight,
+              clampWidth: clampWidth,
+              style: trimStyle,
+              getContainerEl: this.getContainerEl,
+              getTextEl: this.getTextEl,
+            })}
+          </div>
         </div>
       )
     } else {
@@ -162,14 +176,17 @@ export default class FitClamp extends PureComponent {
           className={className}
           ref={r => (this.containerEl = r)}
         >
-          {formatContent({
-            content,
-            lineHeight,
-            clampHeight: this.containerTop + numLines * lineHeight,
-            clampWidth: clampWidth,
-            className: currentTextClass,
-            style: trimStyle,
-          })}
+          <div ref={r => (this.textEl = r)} className={currentTextClass}>
+            {formatContent({
+              content,
+              lineHeight,
+              clampHeight: numLines * lineHeight,
+              clampWidth: clampWidth,
+              style: trimStyle,
+              getContainerEl: this.getContainerEl,
+              getTextEl: this.getTextEl,
+            })}
+          </div>
         </div>
       )
     }
@@ -183,13 +200,19 @@ function formatContent({
   lineHeight,
   className,
   style,
+  getContainerEl,
+  getTextEl,
 }) {
+  const wordProps = {
+    clampHeight: clampHeight,
+    clampWidth: clampWidth,
+    lineHeight: lineHeight,
+    getContainerEl: getContainerEl,
+    getTextEl: getTextEl,
+  }
+
   const words = content.split(" ").map((word, index) => (
-    <Word
-      key={`word-${hashCode(word + index)}`}
-      clampHeight={clampHeight - lineHeight}
-      clampWidth={clampWidth}
-    >
+    <Word key={`word-${hashCode(word + index)}`} {...wordProps}>
       {word}
     </Word>
   ))
@@ -200,7 +223,7 @@ function formatContent({
       0,
       <Word
         key={`space-${hashCode(words[i] + i)}`}
-        clampHeight={clampHeight - lineHeight}
+        {...wordProps}
         isSpace={true}
       >
         {" "}
@@ -222,41 +245,50 @@ function formatContent({
 class Word extends PureComponent {
   state = {
     isClamped: null,
+    isVisible: false,
   }
 
   componentDidMount() {
-    this.clampIfNeeded()
+    setTimeout(() => {
+      this.clampIfNeeded()
+    }, 0)
   }
 
   clampIfNeeded() {
     const { isClamped } = this.state
     if (isClamped !== null) return isClamped
 
-    const { clampHeight } = this.props
+    const { clampHeight, getContainerEl, getTextEl } = this.props
     const element = findDOMNode(this)
     const { top, width } = element.getBoundingClientRect()
-    const newClampedState = top >= clampHeight
 
-    this.setState({ top, width, isClamped: newClampedState })
+    const { top: containerTop } = getContainerEl().getBoundingClientRect()
+    const { top: textTop } = getTextEl().getBoundingClientRect()
+    const delta = textTop - containerTop
+
+    const newClampedState = top >= containerTop + clampHeight - delta
+
+    this.setState({ top, width, isClamped: newClampedState, isVisible: true })
   }
 
   render() {
     const { children, clampWidth, isSpace } = this.props
-    const { isClamped, width } = this.state
-    const style = isClamped
-      ? {
-          opacity: 0,
-          pointerEvents: "none",
-        }
-      : !isSpace
-      ? {
-          display: width > clampWidth ? "inline-block" : "inline",
-          textOverflow: "ellipsis",
-          maxWidth: `${clampWidth}px`,
-          overflowX: "hidden",
-          overflowY: "visible",
-        }
-      : {}
+    const { isClamped, isVisible, width } = this.state
+    const style =
+      isClamped || !isVisible
+        ? {
+            opacity: 0,
+            pointerEvents: "none",
+          }
+        : !isSpace
+        ? {
+            display: width > clampWidth ? "inline-block" : "inline",
+            textOverflow: "ellipsis",
+            maxWidth: `${clampWidth}px`,
+            overflowX: "hidden",
+            overflowY: "visible",
+          }
+        : {}
     return <span style={style}>{children}</span>
   }
 }
