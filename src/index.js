@@ -121,6 +121,10 @@ export default class FitClamp extends PureComponent {
 
     const currentTextClass = textClasses[textClassIndex]
 
+    // This way we can measure horizontal overflows,
+    // and disable flexbox width adjustments, where
+    // the numbers appear OK, despite the text sticking out
+    // of the prescribed width
     const measureStyle = {
       display: "inline-block",
     }
@@ -149,6 +153,7 @@ export default class FitClamp extends PureComponent {
         <div
           key={`measuring-${hashCode(content || "")}`}
           className={className}
+          style={measureStyle}
           ref={r => (this.containerEl = r)}
         >
           <span
@@ -256,17 +261,39 @@ class Word extends PureComponent {
     const { isClamped } = this.state
     if (isClamped !== null) return isClamped
 
-    const { clampHeight, getContainerEl, getTextEl } = this.props
+    const { clampHeight, lineHeight, getContainerEl, getTextEl } = this.props
     const element = findDOMNode(this)
-    const { top, width } = element.getBoundingClientRect()
+    const {
+      top: wordTop,
+      // TODO: Use this to apply ellipsis
+      width: wordWidth,
+      height: wordHeight,
+    } = element.getBoundingClientRect()
 
+    // The text can sometimes be positioned using flexbox,
+    // which offsets the top within the container.
+    // We use this adjustment to calculate the offset correctly.
     const { top: containerTop } = getContainerEl().getBoundingClientRect()
     const { top: textTop } = getTextEl().getBoundingClientRect()
-    const delta = textTop - containerTop
+    const textTopAdjustment = textTop - containerTop
 
-    const newClampedState = top >= containerTop + clampHeight - delta
+    // The actual rendered height exceeds the line-height
+    // line-height is used for baseline rhythm, but the characters
+    // are rendered a bit above and below the actual stacking surface
+    const heightAdjustment = Math.round((wordHeight - lineHeight) / 2)
 
-    this.setState({ top, width, isClamped: newClampedState, isVisible: true })
+    const actualWordTop = wordTop - heightAdjustment
+
+    const actualTextTop = containerTop + textTopAdjustment
+
+    const cutoffTop = actualTextTop + clampHeight - lineHeight
+
+    const newClampedState = actualWordTop > cutoffTop
+
+    this.setState({
+      isClamped: newClampedState,
+      isVisible: true,
+    })
   }
 
   render() {
