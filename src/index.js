@@ -21,6 +21,20 @@ export default class FitClamp extends PureComponent {
   containerHeight = 0
   containerWidth = 0
 
+  constructor(props) {
+    super(props)
+
+    const {
+      state,
+      props: { textClasses },
+    } = this
+
+    this.state = {
+      ...state,
+      textClassIndex: textClasses.length - 1,
+    }
+  }
+
   readContainerDimensions() {
     const { containerEl } = this
     const { top, width, height } = containerEl.getBoundingClientRect()
@@ -71,13 +85,6 @@ export default class FitClamp extends PureComponent {
       lineHeight,
       isTrimmed: true,
       isMeasuring: false,
-    })
-  }
-
-  componentWillMount() {
-    const { textClasses } = this.props
-    this.setState({
-      textClassIndex: textClasses.length - 1,
     })
   }
 
