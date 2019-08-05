@@ -193,49 +193,56 @@ export default class FitClamp extends PureComponent {
   }
 }
 
-function formatContent({
-  content = "",
-  clampHeight,
-  clampWidth,
-  lineHeight,
-  className,
-  style,
-  getContainerEl,
-  getTextEl,
-}) {
-  const wordProps = {
-    clampHeight: clampHeight,
-    clampWidth: clampWidth,
-    lineHeight: lineHeight,
-    getContainerEl: getContainerEl,
-    getTextEl: getTextEl,
+class FormattedContent extends PureComponent {
+  getTextEl = () => {
+    return this.textEl
   }
 
-  const words = content.split(" ").map((word, index) => (
-    <Word key={`word-${hashCode(word + index)}`} {...wordProps}>
-      {word}
-    </Word>
-  ))
+  render() {
+    const {
+      content = "",
+      clampHeight,
+      clampWidth,
+      lineHeight,
+      className,
+      style,
+      getContainerEl,
+    } = this.props
 
-  for (let i = words.length - 1; i > 0; i--) {
-    words.splice(
-      i,
-      0,
-      <Word
-        key={`space-${hashCode(words[i] + i)}`}
-        {...wordProps}
-        isSpace={true}
-      >
-        {" "}
-      </Word>,
+    const wordProps = {
+      clampHeight: clampHeight,
+      clampWidth: clampWidth,
+      lineHeight: lineHeight,
+      getContainerEl: getContainerEl,
+      getTextEl: this.getTextEl,
+    }
+
+    const words = content.split(" ").map((word, index) => (
+      <Word key={`word-${hashCode(word + index)}`} {...wordProps}>
+        {word}
+      </Word>
+    ))
+
+    for (let i = words.length - 1; i > 0; i--) {
+      words.splice(
+        i,
+        0,
+        <Word
+          key={`space-${hashCode(words[i] + i)}`}
+          {...wordProps}
+          isSpace={true}
+        >
+          {" "}
+        </Word>,
+      )
+    }
+
+    return (
+      <div className={className} style={style} ref={r => (this.textEl = r)}>
+        {words.map((w, i) => w)}
+      </div>
     )
   }
-
-  return (
-    <div className={className} style={style}>
-      {words.map((w, i) => w)}
-    </div>
-  )
 }
 
 // Individual Words are rendered as transparent
