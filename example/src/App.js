@@ -18,6 +18,12 @@ export default class App extends Component {
     return (
       <div>
         <FitClamp className={containerClass} textClasses={textClasses}>
+          Verylongwordtest
+        </FitClamp>
+        <FitClamp className={containerClass} textClasses={textClasses}>
+          VerylongwordtestVerylongwordtest
+        </FitClamp>
+        <FitClamp className={containerClass} textClasses={textClasses}>
           Booked
         </FitClamp>
         <FitClamp className={containerClass} textClasses={textClasses}>
@@ -41,6 +47,7 @@ export default class App extends Component {
         <FitClamp className={containerClass} textClasses={textClasses}>
           New videos advertising strategy for Eastern Europe
         </FitClamp>
+
         <FitClamp className={containerClass} textClasses={textClasses}>
           New videos advertising strategy for Eastern European markets
         </FitClamp>

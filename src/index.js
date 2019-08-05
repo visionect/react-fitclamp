@@ -291,6 +291,7 @@ class Word extends PureComponent {
     const newClampedState = actualWordTop > cutoffTop
 
     this.setState({
+      wordWidth,
       isClamped: newClampedState,
       isVisible: true,
     })
@@ -298,7 +299,7 @@ class Word extends PureComponent {
 
   render() {
     const { children, clampWidth, isSpace } = this.props
-    const { isClamped, isVisible, width } = this.state
+    const { isClamped, isVisible, wordWidth } = this.state
     const style =
       isClamped || !isVisible
         ? {
@@ -307,7 +308,7 @@ class Word extends PureComponent {
           }
         : !isSpace
         ? {
-            display: width > clampWidth ? "inline-block" : "inline",
+            display: wordWidth > clampWidth ? "inline-block" : "inline",
             textOverflow: "ellipsis",
             maxWidth: `${clampWidth}px`,
             overflowX: "hidden",
