@@ -35,7 +35,7 @@ export default class FitClamp extends PureComponent {
     return view.getComputedStyle(element, null)
   }
 
-  opmizeSize() {
+  optimizeSize() {
     const { textClassIndex } = this.state
     const { textEl } = this
 
@@ -85,12 +85,12 @@ export default class FitClamp extends PureComponent {
     const { innerText: content } = this.textEl
     this.setState({ content })
     this.readContainerDimensions()
-    this.opmizeSize()
+    this.optimizeSize()
   }
 
   componentDidUpdate() {
     const { isMeasuring } = this.state
-    isMeasuring && this.opmizeSize()
+    isMeasuring && this.optimizeSize()
   }
 
   getContainerEl = () => {
