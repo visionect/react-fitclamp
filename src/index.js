@@ -134,10 +134,14 @@ export default class FitClamp extends PureComponent {
 
     const clampWidth = this.containerWidth
 
-    let delta
-    if (isTrimmed) {
-      const { top: textTop } = this.textEl.getBoundingClientRect()
-      delta = textTop - this.containerTop
+    const formattedProps = {
+      content,
+      lineHeight,
+      className: currentTextClass,
+      clampHeight: numLines * lineHeight,
+      clampWidth: clampWidth,
+      style: trimStyle,
+      getContainerEl: this.getContainerEl,
     }
 
     if (isMeasuring) {
@@ -163,17 +167,7 @@ export default class FitClamp extends PureComponent {
           className={className}
           ref={r => (this.containerEl = r)}
         >
-          <div ref={r => (this.textEl = r)} className={currentTextClass}>
-            {formatContent({
-              content,
-              lineHeight,
-              clampHeight: numLines * lineHeight,
-              clampWidth: clampWidth,
-              style: trimStyle,
-              getContainerEl: this.getContainerEl,
-              getTextEl: this.getTextEl,
-            })}
-          </div>
+          <FormattedContent {...formattedProps} />
         </div>
       )
     } else {
@@ -183,17 +177,7 @@ export default class FitClamp extends PureComponent {
           className={className}
           ref={r => (this.containerEl = r)}
         >
-          <div ref={r => (this.textEl = r)} className={currentTextClass}>
-            {formatContent({
-              content,
-              lineHeight,
-              clampHeight: numLines * lineHeight,
-              clampWidth: clampWidth,
-              style: trimStyle,
-              getContainerEl: this.getContainerEl,
-              getTextEl: this.getTextEl,
-            })}
-          </div>
+          <FormattedContent {...formattedProps} />
         </div>
       )
     }
